@@ -432,9 +432,10 @@
         <option>Masih Ragu</option>
       </select>
       <textarea id="wMsg" placeholder="Tuliskan doa &amp; ucapan terbaik Anda..." required></textarea>
-      <button type="submit">Kirim Ucapan</button>
+      <button type="submit">Kirim Ucapan via WhatsApp</button>
     </form>
     <div class="wishes" id="wishes"></div>
+    <p style="text-align:center;margin-top:18px;font-size:.85rem;color:#9eb1bb;font-style:italic">Ucapan akan dikirim langsung ke WhatsApp mempelai</p>
   </div>
 </section>
 
@@ -486,29 +487,39 @@
   }
   setInterval(tick,1000);tick();
 
-  const wishesEl=document.getElementById('wishes');
-  const stored=JSON.parse(localStorage.getItem('toba_wishes')||'[]');
-  const seed=[
-    {n:'Keluarga Besar Sembiring',a:'Hadir',m:'Selamat menempuh hidup baru. Semoga menjadi keluarga yang penuh berkat dan kebahagiaan.'},
-    {n:'Sahabat Lama',a:'Hadir',m:'Akhirnya hari itu tiba! Bahagia selalu untuk kalian berdua di tepi Danau Toba.'},
+  // ============================================
+  //  DAFTAR UCAPAN — edit array ini untuk tambah/hapus ucapan
+  //  Format: {n:'Nama', a:'Hadir/Tidak Hadir/Masih Ragu', m:'Isi ucapan'}
+  // ============================================
+  const allWishes = [
+    // contoh format (hapus baris ini kalau belum ada ucapan):
+    // {n:'Pak Budi', a:'Hadir', m:'Selamat ya, semoga bahagia selalu.'},
   ];
-  let allWishes=stored.length?stored:seed;
+
+  // Nomor WhatsApp mempelai (format internasional, tanpa + dan tanpa spasi)
+  // Contoh: 6281234567890
+  const WA_NUMBER = "6281234567890";
+
+  const wishesEl=document.getElementById('wishes');
   function renderWishes(){
+    if(allWishes.length===0){
+      wishesEl.innerHTML='<p style="text-align:center;color:#9eb1bb;padding:20px;font-style:italic">Belum ada ucapan. Jadilah yang pertama!</p>';
+      return;
+    }
     wishesEl.innerHTML=allWishes.map(w=>`
       <div class="wish"><strong>${w.n}</strong> · <em style="color:#c9a96e;font-size:.8rem">${w.a}</em>
       <p>${w.m}</p></div>`).join('');
   }
   renderWishes();
+
   document.getElementById('wishForm').addEventListener('submit',e=>{
     e.preventDefault();
-    const w={
-      n:document.getElementById('wName').value.trim(),
-      a:document.getElementById('wAttend').value,
-      m:document.getElementById('wMsg').value.trim()
-    };
-    allWishes.unshift(w);
-    localStorage.setItem('toba_wishes',JSON.stringify(allWishes.slice(0,50)));
-    renderWishes();
+    const n=document.getElementById('wName').value.trim();
+    const a=document.getElementById('wAttend').value;
+    const m=document.getElementById('wMsg').value.trim();
+    const text=`*Ucapan Pernikahan Permana & Debi*\n\nNama: ${n}\nKehadiran: ${a}\n\nUcapan:\n${m}`;
+    const url=`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+    window.open(url,'_blank');
     e.target.reset();
   });
 
