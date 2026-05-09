@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daftar Tamu Undangan — Permana & Debi</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+  body{background:#fbf7f0;color:#1a1a1a;padding:30px 20px;min-height:100vh}
+  .wrap{max-width:760px;margin:0 auto}
+  h1{color:#0e2a3a;font-size:1.6rem;margin-bottom:6px}
+  p.sub{color:#666;margin-bottom:24px;font-size:.95rem}
+  .info{background:#fff5e0;border-left:4px solid #c9a96e;padding:14px 18px;border-radius:4px;margin-bottom:24px;font-size:.9rem;line-height:1.6;color:#5a4a2a}
+  .info code{background:#f0e5c8;padding:2px 6px;border-radius:3px;font-size:.85em}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #eee;font-size:.95rem}
+  th{background:#0e2a3a;color:#fff;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase}
+  tr:hover td{background:#fafafa}
+  .name{font-weight:600;color:#0e2a3a}
+  .btn{display:inline-block;padding:6px 12px;border-radius:4px;text-decoration:none;font-size:.8rem;font-weight:600;margin-right:6px;transition:.2s}
+  .btn-link{background:#0e2a3a;color:#fff}
+  .btn-wa{background:#25d366;color:#fff}
+  .btn-copy{background:#c9a96e;color:#fff;border:none;cursor:pointer;font-family:inherit}
+  .btn:hover,.btn-copy:hover{opacity:.85;transform:translateY(-1px)}
+  .count{color:#c9a96e;font-weight:600}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+    background:#0e2a3a;color:#fff;padding:12px 24px;border-radius:6px;
+    transition:.3s;opacity:0;font-size:.9rem;z-index:99}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  @media (max-width:600px){
+    th,td{padding:10px 8px;font-size:.85rem}
+    .btn{display:block;margin:3px 0;text-align:center}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📋 Daftar Tamu Undangan</h1>
+  <p class="sub">Wedding Permana Sembiring &amp; Debi E. Silitonga · Total tamu: <span class="count" id="total">0</span></p>
+
+  <div class="info">
+    <strong>Cara menambah/mengedit nama tamu:</strong><br>
+    Buka file <code>guests.html</code> di folder ini → scroll ke bawah → cari array <code>const guests = [...]</code> → tambah/edit nama di dalam tanda kutip → simpan → push ke GitHub.<br><br>
+    <strong>Format pesan WhatsApp</strong> bisa diedit di variabel <code>const waMessage</code>.
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>No</th><th>Nama Tamu</th><th>Aksi</th></tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="toast" id="toast">Link tersalin!</div>
+
+<script>
+  // ============================================
+  //  EDIT DAFTAR TAMU DI BAWAH INI
+  //  Tambah nama dengan format: "Nama Tamu",
+  //  Setiap nama dipisah koma, dalam tanda kutip
+  // ============================================
+  const guests = [
+    "Bapak Budi Santoso",
+    "Ibu Siti Aminah",
+    "Keluarga Sembiring",
+    "Keluarga Silitonga",
+    "Sahabat Kantor",
+    "Teman Kuliah",
+    // tambahkan nama tamu di sini
+  ];
+
+  // URL undangan (otomatis pakai domain saat ini)
+  const baseURL = "https://permana4131.github.io/demo-wedding/";
+
+  // Pesan WhatsApp (gunakan {nama} dan {link} sebagai placeholder)
+  const waMessage = `Bismillahirrahmanirrahim,
+
+Kepada Yth. *{nama}*
+
+Tanpa mengurangi rasa hormat, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami:
+
+💑 *Permana Sembiring & Debi E. Silitonga*
+📅 Sabtu, 15 Agustus 2026
+📍 Danau Toba, Sumatera Utara
+
+Detail undangan & RSVP:
+{link}
+
+Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
+
+Terima kasih 🙏`;
+
+  // ============================================
+  //  Jangan ubah kode di bawah
+  // ============================================
+  const tbody = document.getElementById('tbody');
+  document.getElementById('total').textContent = guests.length;
+
+  guests.forEach((name, i) => {
+    const link = baseURL + "?to=" + encodeURIComponent(name);
+    const msg = waMessage.replace('{nama}', name).replace('{link}', link);
+    const waLink = "https://wa.me/?text=" + encodeURIComponent(msg);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td class="name">${name}</td>
+      <td>
+        <a class="btn btn-link" href="${link}" target="_blank">🔗 Buka</a>
+        <a class="btn btn-wa" href="${waLink}" target="_blank">💬 WA</a>
+        <button class="btn btn-copy" onclick="copyLink('${link.replace(/'/g,"\\'")}')">📋 Copy</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  function copyLink(url){
+    navigator.clipboard.writeText(url).then(()=>{
+      const t=document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'),1500);
+    });
+  }
+</script>
+</body>
+</html>
