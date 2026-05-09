@@ -624,107 +624,26 @@
   }
   setInterval(()=>{if(main.classList.contains('show'))spawnPetal()},800);
 
-  // ===== Generative Wedding Music (Web Audio API) =====
-  // Soft romantic ambient — Canon-style chord progression with gentle melody & reverb
-  let ac,playing=false,timers=[],reverb,masterGain;
-  const musicBtn=document.getElementById('music');
-  // Pachelbel-inspired progression (D - A - Bm - F#m - G - D - G - A) transposed for soft feel
-  const progression=[
-    [293.66,369.99,440.00,587.33], // D
-    [440.00,554.37,659.25,440.00], // A
-    [493.88,587.33,739.99,493.88], // Bm
-    [369.99,440.00,554.37,369.99], // F#m
-    [392.00,493.88,587.33,392.00], // G
-    [293.66,369.99,440.00,587.33], // D
-    [392.00,493.88,587.33,392.00], // G
-    [440.00,554.37,659.25,440.00], // A
-  ];
-  // Soft melodic line in D major
-  const melody=[
-    587.33,659.25,739.99,659.25,
-    554.37,659.25,554.37,440.00,
-    493.88,587.33,659.25,587.33,
-    554.37,440.00,369.99,440.00,
-    493.88,587.33,659.25,739.99,
-    587.33,659.25,587.33,493.88,
-    440.00,493.88,587.33,659.25,
-    554.37,659.25,739.99,659.25
-  ];
+  // ===== Music Player — Holong Rumampak Laba Rimba (Henry Manullang) =====
+  const audio = new Audio('img/music.mp3');
+  audio.loop = true;
+  audio.volume = 0.6;
+  const musicBtn = document.getElementById('music');
+  let playing = false;
 
-  function setupReverb(){
-    const c=ac.createConvolver();
-    const len=ac.sampleRate*3;
-    const buf=ac.createBuffer(2,len,ac.sampleRate);
-    for(let ch=0;ch<2;ch++){
-      const d=buf.getChannelData(ch);
-      for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.5);
-    }
-    c.buffer=buf;
-    const wet=ac.createGain();wet.gain.value=.4;
-    c.connect(wet);wet.connect(masterGain);
-    reverb=c;
-  }
-  function playNote(freq,start,dur,gain=.06,type='sine'){
-    const o=ac.createOscillator();
-    const g=ac.createGain();
-    o.type=type;o.frequency.value=freq;
-    g.gain.setValueAtTime(0,start);
-    g.gain.linearRampToValueAtTime(gain,start+.08);
-    g.gain.linearRampToValueAtTime(gain*.7,start+dur*.6);
-    g.gain.exponentialRampToValueAtTime(.0001,start+dur);
-    o.connect(g);
-    g.connect(reverb);
-    g.connect(masterGain);
-    o.start(start);o.stop(start+dur+.1);
-  }
-  function scheduleLoop(){
-    const t0=ac.currentTime+.1;
-    const beat=.7;
-    const barLen=beat*4;
-    progression.forEach((chord,i)=>{
-      const tBar=t0+i*barLen;
-      // soft pad (chord)
-      chord.slice(0,3).forEach(f=>playNote(f,tBar,barLen*1.05,.025,'sine'));
-      // bass
-      playNote(chord[0]/2,tBar,barLen*.95,.06,'triangle');
-      playNote(chord[0]/2,tBar+beat*2,barLen*.5,.04,'triangle');
-      // arpeggio bell-like
-      [0,1,2,1].forEach((idx,j)=>{
-        playNote(chord[idx]*2,tBar+j*beat,beat*.85,.03,'sine');
-      });
-    });
-    // melody overlaid
-    melody.forEach((f,i)=>{
-      playNote(f,t0+i*beat,beat*1.1,.045,'triangle');
-    });
-    const total=progression.length*barLen*1000;
-    timers.push(setTimeout(scheduleLoop,total));
-  }
   function startMusic(){
-    if(playing)return;
-    try{
-      ac=new (window.AudioContext||window.webkitAudioContext)();
-      masterGain=ac.createGain();
-      masterGain.gain.value=.5;
-      masterGain.connect(ac.destination);
-      setupReverb();
-      scheduleLoop();
-      playing=true;
+    audio.play().then(()=>{
+      playing = true;
       musicBtn.classList.add('playing');
-    }catch(e){console.log('Audio not available')}
+    }).catch(err=>console.log('Autoplay blocked, click music button to play'));
   }
   function stopMusic(){
-    if(!playing)return;
-    timers.forEach(clearTimeout);timers=[];
-    if(masterGain){
-      masterGain.gain.linearRampToValueAtTime(0,ac.currentTime+.5);
-      setTimeout(()=>{if(ac)ac.close()},600);
-    }
-    playing=false;
+    audio.pause();
+    playing = false;
     musicBtn.classList.remove('playing');
   }
   musicBtn.addEventListener('click',()=>{
-    if(playing)stopMusic();else startMusic();
+    if(playing) stopMusic(); else startMusic();
   });
 </script>
 </body>
