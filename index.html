@@ -625,13 +625,20 @@
   setInterval(()=>{if(main.classList.contains('show'))spawnPetal()},800);
 
   // ===== Music Player — Holong Rumampak Laba Rimba (Henry Manullang) =====
+  const MUSIC_START = 62; // mulai dari menit 1:02 (62 detik)
   const audio = new Audio('img/music.mp3');
-  audio.loop = true;
   audio.volume = 0.6;
   const musicBtn = document.getElementById('music');
   let playing = false;
 
+  // Loop manual: balik ke MUSIC_START setiap kali lagu habis
+  audio.addEventListener('ended', ()=>{
+    audio.currentTime = MUSIC_START;
+    audio.play();
+  });
+
   function startMusic(){
+    if(audio.currentTime < MUSIC_START) audio.currentTime = MUSIC_START;
     audio.play().then(()=>{
       playing = true;
       musicBtn.classList.add('playing');
