@@ -116,16 +116,29 @@
   .couple-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:40px;align-items:center;margin-top:20px}
   .person{text-align:center}
   .person .photo{
-    width:200px;height:240px;margin:0 auto 24px;
+    width:220px;height:280px;margin:0 auto 24px;
     border-radius:50% 50% 48% 52% / 60% 60% 40% 40%;
-    background:linear-gradient(135deg,#c9a96e,#3a7ca5);
-    box-shadow:0 20px 50px rgba(14,42,58,.25),inset 0 0 0 8px rgba(255,255,255,.4);
+    background-image:url('img/couple.jpg');
+    background-size:300% auto;
+    background-repeat:no-repeat;
+    box-shadow:0 25px 60px rgba(14,42,58,.35),
+      inset 0 0 0 6px rgba(255,255,255,.6),
+      inset 0 0 0 8px rgba(201,169,110,.4),
+      0 0 0 12px rgba(201,169,110,.1);
     position:relative;overflow:hidden;animation:floatSoft 6s ease-in-out infinite;
+    border:1px solid rgba(201,169,110,.3);
   }
-  .person:nth-child(3) .photo{animation-delay:-3s}
+  .person.groom .photo{background-position:24% 22%}
+  .person.bride .photo{background-position:62% 22%;animation-delay:-3s}
   @keyframes floatSoft{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   .person .photo::after{content:"";position:absolute;inset:0;
-    background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.3),transparent 50%);}
+    background:linear-gradient(180deg,transparent 60%,rgba(14,42,58,.15));
+    pointer-events:none;}
+  .person .photo::before{
+    content:"";position:absolute;inset:-2px;border-radius:inherit;
+    background:linear-gradient(135deg,var(--gold),transparent 40%,transparent 60%,var(--gold));
+    z-index:-1;opacity:.5;
+  }
   .person h3{font-family:'Great Vibes',cursive;font-size:2.6rem;color:var(--deep);font-weight:400;letter-spacing:0}
   .person .role{font-family:'Cinzel',serif;letter-spacing:.3em;font-size:.7rem;color:var(--gold);margin:8px 0 14px;text-transform:uppercase}
   .person .desc{color:#555;font-size:1rem;line-height:1.7;max-width:280px;margin:0 auto}
@@ -134,6 +147,62 @@
     line-height:1;text-shadow:0 4px 20px rgba(201,169,110,.4);
     animation:pulseGold 3s ease-in-out infinite;}
   @keyframes pulseGold{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+  /* HERO PHOTO */
+  #hero-photo{
+    background:linear-gradient(180deg,#0e2a3a 0%,#1a3d52 50%,#0e2a3a 100%);
+    padding:100px 24px;position:relative;overflow:hidden;
+  }
+  #hero-photo::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse at center,rgba(201,169,110,.18),transparent 60%);
+  }
+  .frame-wrap{
+    max-width:580px;margin:0 auto;position:relative;
+    padding:24px;
+  }
+  .frame-wrap::before,.frame-wrap::after{
+    content:"";position:absolute;width:60px;height:60px;
+    border:2px solid var(--gold);
+  }
+  .frame-wrap::before{top:0;left:0;border-right:none;border-bottom:none}
+  .frame-wrap::after{bottom:0;right:0;border-left:none;border-top:none}
+  .photo-frame{
+    position:relative;border-radius:6px;overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,.5),
+      0 0 0 1px rgba(201,169,110,.5),
+      0 0 0 8px rgba(201,169,110,.1);
+    transform:translateY(0);
+    transition:transform .8s ease;
+  }
+  .photo-frame img{
+    width:100%;height:auto;display:block;
+    filter:saturate(1.1) contrast(1.05);
+    transition:transform 1s ease;
+  }
+  .photo-frame:hover img{transform:scale(1.04)}
+  .photo-frame::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 50%,rgba(14,42,58,.4));
+    pointer-events:none;
+  }
+  .photo-caption{
+    text-align:center;margin-top:32px;color:#fff;
+  }
+  .photo-caption .quote{
+    font-family:'Great Vibes',cursive;font-size:2rem;color:var(--gold-light);
+    line-height:1.3;margin-bottom:10px;
+  }
+  .photo-caption .sig{
+    font-family:'Cinzel',serif;letter-spacing:.4em;font-size:.75rem;
+    color:var(--gold);text-transform:uppercase;
+  }
+  .photo-deco{
+    position:absolute;font-family:'Great Vibes',cursive;color:rgba(201,169,110,.15);
+    font-size:14rem;line-height:1;pointer-events:none;user-select:none;
+  }
+  .photo-deco.left{top:10%;left:-2%}
+  .photo-deco.right{bottom:10%;right:-2%}
 
   #event{background:linear-gradient(180deg,#0e2a3a 0%,#163e54 50%,#0e2a3a 100%);color:#fff;position:relative}
   #event .toba-bg{position:absolute;inset:0;opacity:.15;
@@ -185,15 +254,17 @@
   #gallery{background:var(--paper)}
   .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
   .gal-item{aspect-ratio:1/1;border-radius:4px;overflow:hidden;position:relative;
-    background:linear-gradient(135deg,#c9a96e,#3a7ca5);transition:.5s;cursor:pointer;}
-  .gal-item:nth-child(2){background:linear-gradient(135deg,#3a7ca5,#0e2a3a)}
-  .gal-item:nth-child(3){background:linear-gradient(135deg,#e6d3a3,#c9a96e)}
-  .gal-item:nth-child(4){background:linear-gradient(135deg,#1a4361,#c9a96e)}
-  .gal-item:nth-child(5){background:linear-gradient(135deg,#0e2a3a,#3a7ca5)}
-  .gal-item:nth-child(6){background:linear-gradient(135deg,#c9a96e,#1a4361)}
+    background-image:url('img/couple.jpg');background-size:300% auto;
+    transition:.5s;cursor:pointer;}
+  .gal-item:nth-child(1){background-position:30% 20%}
+  .gal-item:nth-child(2){background-position:65% 25%}
+  .gal-item:nth-child(3){background-position:50% 60%}
+  .gal-item:nth-child(4){background-position:25% 50%}
+  .gal-item:nth-child(5){background-position:70% 60%}
+  .gal-item:nth-child(6){background-position:50% 30%}
   .gal-item::after{content:"";position:absolute;inset:0;
-    background:radial-gradient(circle at 50% 60%,transparent,rgba(0,0,0,.3));}
-  .gal-item:hover{transform:scale(1.04);box-shadow:0 20px 40px rgba(0,0,0,.2)}
+    background:linear-gradient(180deg,transparent 50%,rgba(14,42,58,.7));}
+  .gal-item:hover{transform:scale(1.04);box-shadow:0 20px 40px rgba(0,0,0,.3)}
   .gal-item .lbl{position:absolute;bottom:12px;left:12px;color:#fff;
     font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;z-index:2;
     text-shadow:0 2px 8px rgba(0,0,0,.5);}
@@ -254,7 +325,11 @@
     .gal{grid-template-columns:repeat(2,1fr)}
     .cd-box{min-width:70px;padding:16px 12px}
     .cd-box .num{font-size:1.5rem}
-    .person .photo{width:170px;height:200px}
+    .person .photo{width:180px;height:230px}
+    .photo-deco{font-size:8rem}
+    #hero-photo{padding:70px 20px}
+    .frame-wrap{padding:18px}
+    .frame-wrap::before,.frame-wrap::after{width:40px;height:40px}
     #music{width:48px;height:48px;bottom:18px;right:18px}
   }
   ::-webkit-scrollbar{width:6px}
@@ -304,7 +379,7 @@
       <h2 class="title">Mempelai</h2>
     </div>
     <div class="couple-grid reveal">
-      <div class="person">
+      <div class="person groom">
         <div class="photo"></div>
         <h3>Permana Sembiring</h3>
         <div class="role">The Groom</div>
@@ -312,13 +387,27 @@
         <p class="parents">Bapak Sembiring<br/>&amp; Ibu Sembiring</p>
       </div>
       <div class="amp-mid">&amp;</div>
-      <div class="person">
+      <div class="person bride">
         <div class="photo"></div>
         <h3>Debi E. Silitonga</h3>
         <div class="role">The Bride</div>
         <p class="desc">Putri dari</p>
         <p class="parents">Bapak Silitonga<br/>&amp; Ibu Silitonga</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="hero-photo">
+  <span class="photo-deco left">P</span>
+  <span class="photo-deco right">D</span>
+  <div class="frame-wrap reveal">
+    <div class="photo-frame">
+      <img src="img/couple.jpg" alt="Permana & Debi" />
+    </div>
+    <div class="photo-caption">
+      <div class="quote">"Two souls, one journey"</div>
+      <div class="sig">— Permana &amp; Debi —</div>
     </div>
   </div>
 </section>
